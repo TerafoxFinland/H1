@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class MoveSelectedInGridWithMouse : MonoBehaviour {
+    public int idNumber; //nappulan tunniste
     [HideInInspector]
     public bool selected = false;
     bool moved = true;
@@ -16,7 +17,8 @@ public class MoveSelectedInGridWithMouse : MonoBehaviour {
     float startTime;
     float timeDifference;
     private Grid m_Grid;
-    Vector3Int gridPos;
+    [HideInInspector]
+    public Vector3Int gridPos;
     //Vector3 center;
     Tilemap tilemap;
 
@@ -77,22 +79,12 @@ public class MoveSelectedInGridWithMouse : MonoBehaviour {
             gridPos = m_Grid.WorldToCell(world);
             Debug.Log("gridPos = " + gridPos);
 
+            //Kirjoita taulukkoon
+            kontrolli.iRuudukko[gridPos.x, gridPos.y, 0] = idNumber;
+
             
             Vector3Int cellPosition = tilemap.LocalToCell(transform.localPosition);
             transform.localPosition = tilemap.GetCellCenterLocal(cellPosition);
-
-            //center = m_Grid.GetCellCenterLocal(gridPos);
-            //Debug.Log("center = " + center);
-            //transform.position = center;
-            //world = m_Grid.CellToWorld(gridPos);
-            //Debug.Log("world = " + world);
-            //transform.position = world;
-            //transform.position = (Vector2)Camera.main.WorldToScreenPoint(world);
-            //transform.position = (Vector2) Camera.main.WorldToScreenPoint(world);
-            //transform.position = m_Grid.GetCellCenterWorld(gridPos);
-            //transform.position = m_Grid.CellToWorld(gridPos);
-            //m_Grid.
-            //Camera.main.
             Debug.Log("transform.position = " + transform.position);
             
         }
