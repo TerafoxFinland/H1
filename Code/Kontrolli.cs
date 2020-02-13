@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+//using UnityEditor;
 
 public class Kontrolli : MonoBehaviour {
     public static Kontrolli instance = null;                //Static instance of GameManager which allows it to be accessed by any other script.
@@ -8,8 +9,7 @@ public class Kontrolli : MonoBehaviour {
     public bool laattaValittu = false;
     [HideInInspector]
     public bool blokkiValittu = false;
-    [HideInInspector]
-    
+    [HideInInspector]    
     public GameObject[] nappulat;
     [HideInInspector]
     public float[,] fRuudukko;
@@ -18,17 +18,10 @@ public class Kontrolli : MonoBehaviour {
     int i, j, h;
 
     // Use this for initialization
-    void Start () {
+    void Awake () {
         fRuudukko = new float[10,10];
         iRuudukko = new int[10, 10, 2];
-        if (nappulat == null)
-        {
-            nappulat = GameObject.FindGameObjectsWithTag("Nappula");
-        }
-    }
-
-    void Awake()
-    {
+       
         //Check if instance already exists
         if (instance == null)
             //if not, set instance to this
@@ -41,24 +34,55 @@ public class Kontrolli : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
     }
 
-        void LueNappulat()
+    void Helou()
     {
+       
+
+        //if (nappulat == null)
+        //{
+        //    nappulat = GameObject.FindGameObjectsWithTag("Nappula");
+        //}
+        //LueNappulat();
+    }
+
+    public void LueNappulat()
+    {
+        Debug.Log("LUETAAN NAPPULAT... ");
+        int n = 1;
+
+        //if (nappulat == null)
+        {
+            
+            nappulat = GameObject.FindGameObjectsWithTag("Nappula");
+        }
         foreach (GameObject go in nappulat)
         {
             Vector3Int pos = go.GetComponent<MoveSelectedInGridWithMouse>().gridPos;
-            Debug.Log("Sijainti: " + pos);
+            Debug.Log("Nappulan sijainti: " + pos + " " + n);
+            n++;
         }
     }
 
-    void LueTaulukko()
+    public void LueTaulukko()
     {
+        //testin ajaksi palataan heti
+        //return;
+        string s = "";
         for(j = 0; j < 10; j++)
         {
             for(i = 0; i < 10; i++)
             {
-                Debug.Log("Solun tieto: " + iRuudukko[i, j]);
+                //s = s + iRuudukko[j, i, 0] + " \r\n";
+                //s = s + iRuudukko[j, i, 0] + " ";
+                Debug.Log("Solun tieto 0: " + iRuudukko[j, i, 0]); // + j + " " + i); 
+                Debug.Log("Solun tieto 1: " + iRuudukko[j, i, 1]);
             }
         }
+        //s = s.Replace("\n", System.Environment.NewLine);
+        //s = s.Replace("\n", "A");
+        //EditorGUIUtility.systemCopyBuffer = s;
+        //Debug.Log("Solun tieto 0: " + s);
+        print("Solun tieto 0: " + s);
     }
 
 	// Update is called once per frame
