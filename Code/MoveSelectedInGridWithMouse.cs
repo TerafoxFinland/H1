@@ -40,9 +40,9 @@ public class MoveSelectedInGridWithMouse : MonoBehaviour
         Debug.Log("gridPos = " + gridPos);
 
         //Start the coroutine we define below named ExampleCoroutine.
-        StartCoroutine(ExampleCoroutine());
+        //StartCoroutine(ExampleCoroutine());
 
-        InitGame();
+        //InitGame();
     }
 
     IEnumerator ExampleCoroutine()
