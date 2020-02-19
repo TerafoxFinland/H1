@@ -23,14 +23,18 @@ public class MoveSelectedInGridWithMouse : MonoBehaviour
     //private Vector3 world;
     [HideInInspector]
     public Vector3Int gridPos;
+    [HideInInspector]
+    public Vector3Int gridPos0;
     //Vector3 center;
     Tilemap tilemap;
     int ix, iy, fx, fy;
+    SpriteRenderer sr;
 
     // Use this for initialization
     void Start () {
         go = GameObject.Find("Handler");
         kontrolli = go.GetComponent<Kontrolli>();
+        sr = GetComponent<SpriteRenderer>();
         targetPos = transform.position;
         m_Grid = GameObject.Find("Grid").GetComponent<Grid>();
         tilemap = GameObject.Find("Base").GetComponent<Tilemap>();
@@ -38,10 +42,8 @@ public class MoveSelectedInGridWithMouse : MonoBehaviour
         Debug.Log("GAMEOBJECT ENABLED " + startTime + "POSITION " + targetPos);
         gridPos = m_Grid.WorldToCell(targetPos);
         Debug.Log("gridPos = " + gridPos);
-
         //Start the coroutine we define below named ExampleCoroutine.
         //StartCoroutine(ExampleCoroutine());
-
         //InitGame();
     }
 
@@ -72,31 +74,37 @@ public class MoveSelectedInGridWithMouse : MonoBehaviour
     void OnMouseDown()
     {
         startTime = Time.time;
-        Debug.Log("START TIME " + startTime);
+        //Debug.Log("START TIME " + startTime);
 
         if (!kontrolli.blokkiValittu && !clicked)
         {
-            //Debug.Log("VALINTA TEHTY");
             clicked = true;
             //Debug.Log("Clicked " + clicked);
             selected = true;
+            //Debug.Log("VALINTA TEHTY selected " + selected );
             kontrolli.blokkiValittu = true;
             //Debug.Log(gameObject + " selected");
-            //startPos = (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            startPos = transform.position;
             //Debug.Log("START POS " + startPos);
-            
+            gridPos0 = m_Grid.WorldToCell(startPos);
+            sr.color = Color.cyan;
+        }
+        else
+        {
+            targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            gridPos = m_Grid.WorldToCell(targetPos);
+            if (gridPos0 == gridPos) { Debug.Log("KOHTEET SAMAT");
+                clicked = false;
+                selected = false;
+                kontrolli.blokkiValittu = false;
+                sr.color = Color.white;
+                return; }
         }
     }
 
     // Update is called once per frame
-    void Update () {
-
-        if (m_Grid && Input.GetMouseButtonDown(0))
-        {
-            timeDifference = Time.time - startTime;
-            Debug.Log("Mouse Clicked, Time difference" + timeDifference);
-        }
-
+    void Update () 
+    {
         if (m_Grid && Input.GetMouseButtonDown(0) && clicked)
         {
             timeDifference = Time.time - startTime;
@@ -105,29 +113,25 @@ public class MoveSelectedInGridWithMouse : MonoBehaviour
             {
                 targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 //Debug.Log("Liikkeelle lähdetty" + targetPos);
-                moved = true;
+                gridPos = m_Grid.WorldToCell(targetPos);
+                if (gridPos0 == gridPos) return;
+                else
+                    moved = true;
+                Debug.Log("gridPos != gridPos0");
             }
-            
-            
         }
-        if (transform.position != (Vector3) targetPos && selected && moved)
+        //if (transform.position != (Vector3) targetPos && selected && moved)
+            if (selected && moved)
             {
                 transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
         }
-        if (transform.position == (Vector3) targetPos && moved)
-        {
+        if (transform.position == (Vector3) targetPos && selected && moved)
+        { //Debug.Log("Kohde saavutettu" + targetPos);
             moved = false;
             selected = false;
-            //Debug.Log("Kohde saavutettu" + targetPos);
             kontrolli.blokkiValittu = false;
             clicked = false;
-
-            //Debug.Log("targetPos = " + targetPos);
-            
-            gridPos = m_Grid.WorldToCell(targetPos);
-            Debug.Log("gridPos = " + gridPos);
-            //Debug.Log("gridPos.x " + gridPos.x.ToString());
-
+            sr.color = Color.white;
             //Kirjoita taulukkoon
             //KORJATTAVA KOORDINAATIT: LISÄTTÄVÄ ARVO, ETTEI MENE NEGATIIVISELLE
             //TARKISTUS MYÖS, ETTEI MENE YLI RAJAN!
@@ -140,12 +144,9 @@ public class MoveSelectedInGridWithMouse : MonoBehaviour
 
             kontrolli.iRuudukko[ix, iy, 0] = idNumber;
             kontrolli.iRuudukko[ix, iy, 1] = type;
-
-
+            //Keskitä ruudukkoon
             Vector3Int cellPosition = tilemap.LocalToCell(transform.localPosition);
             transform.localPosition = tilemap.GetCellCenterLocal(cellPosition);
-            //Debug.Log("transform.position = " + transform.position);
-            
         }
     }
 
